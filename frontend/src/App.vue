@@ -41,8 +41,16 @@
   }
 }
 
+.error {
+  color: rgb(175, 0, 0);
+}
+
 .flex-column {
   display: flex;
   flex-direction: column;
+}
+
+.sucess {
+  color: rgb(0, 0, 175);
 }
 </style>

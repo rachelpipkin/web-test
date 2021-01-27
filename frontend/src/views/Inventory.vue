@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import InventoryCreate from './InventoryCreate.vue'
+import InventoryCreate from './InventoryCreate'
 export default {
   components: { InventoryCreate }
 }

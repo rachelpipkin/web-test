@@ -1,5 +1,5 @@
 <template>
-  <div id="inventory-create" class="flex-column">
+  <div id="inventory-create" class="flex-column" :key="componentKey">
     <h1>Create a new inventory slot</h1>
     <date-picker @change="updateDate" :withLabel="true" />
     <time-picker
@@ -14,44 +14,75 @@
     />
     <label>
       Number of reservations for every 15 minute window:
-      <input type="number" id="quantity" min="1" max="20" v-model="quantity" />
+      <select id="quantity" v-model="quantity">
+        <option v-for="option in quantityOptions" :key="option">{{
+          option
+        }}</option>
+      </select>
     </label>
+
     <div id="action-items">
       <button type="button" class="button">Cancel</button>
       <button type="button" class="button primary" @click="createInventory">
         Create
       </button>
     </div>
+    <submit-message :submitMessage="submitMessage" />
   </div>
 </template>
 
 <script>
-import axios from 'axios'
 import moment from 'moment'
-import DatePicker from '../components/DatePicker.vue'
-import TimePicker from '../components/TimePicker.vue'
+import makeNumberList from '../mixins/makeNumberList'
+import DatePicker from '../components/DatePicker'
+import SubmitMessage from '../components/SubmitMessage'
+import TimePicker from '../components/TimePicker'
 
 export default {
   name: 'InventoryCreate',
-  components: { DatePicker, TimePicker },
+  mixins: [makeNumberList],
+  components: { DatePicker, SubmitMessage, TimePicker },
   data() {
     return {
+      componentKey: 0,
       date: moment(),
-      startTime: null,
-      endTime: null,
-      quantity: 0
+      endTime: '01:00',
+      quantity: 0,
+      submitMessage: null,
+      startTime: '01:00'
+    }
+  },
+  computed: {
+    quantityOptions() {
+      return this.makeNumberList(1, 20, 1, 1)
     }
   },
   methods: {
     createInventory() {
-      console.log(this.date, this.startTime, this.endTime, this.quantity)
+      if (this.startTime == this.endTime || this.quantity == 0) {
+        this.submitMessage = {
+          text: 'One or more fields is invalid, please try again.',
+          type: 'error'
+        }
+      } else {
+        //   TODO format and submit to the server
+        this.resetForm()
+        this.submitMessage = {
+          text: 'Inventory block created.',
+          type: 'success'
+        }
+      }
+    },
+    resetForm() {
+      this.startTime = '01:00'
+      this.endTime = '01:00'
+      this.quantity = 0
+      this.componentKey += 1
     },
     updateDate(newVal) {
       this.date = moment(newVal)
     },
-    updateTime(event, type) {
-      const newVal = event.target.value
-
+    updateTime(newVal, type) {
       if (type == 'start') {
         this.startTime = newVal
       } else if (type == 'end') {
