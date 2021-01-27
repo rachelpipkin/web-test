@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/reservations">Reservations</router-link> |
+      <router-link to="/reservations">Reservations</router-link>|
       <router-link to="/inventory">Inventory</router-link>
     </div>
     <router-view />
@@ -28,5 +28,21 @@
       color: #42b983;
     }
   }
+}
+
+.button {
+  background-color: rgb(250, 250, 250);
+  border-radius: 5px;
+  margin: 5px;
+  padding: 5px 10px;
+
+  &.primary {
+    font-weight: bold;
+  }
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
 }
 </style>
