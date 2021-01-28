@@ -23,10 +23,10 @@ export default {
   },
   computed: {
     formattedDate: {
-      get: function() {
+      get() {
         return this.date.format('YYYY-MM-DD')
       },
-      set: function(newVal) {
+      set(newVal) {
         this.$emit('change', newVal)
 
         return newVal
