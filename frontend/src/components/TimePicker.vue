@@ -54,7 +54,7 @@ export default {
         formattedTime = `00:${minute}`
       }
 
-      this.$emit('change', formattedTime)
+      this.$emit('input', formattedTime)
     }
   }
 }

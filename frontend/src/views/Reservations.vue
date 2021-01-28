@@ -20,8 +20,8 @@
             }}</option>
           </select>
         </label>
-        <date-picker @change="updateDate" :withLabel="true" />
-        <time-picker id="start-time" label="Time" @change="updateTime()" />
+        <date-picker v-model="date" :withLabel="true" />
+        <time-picker id="start-time" label="Time" v-model="startTime" />
         <div id="action-items">
           <button type="button" class="button" @click="resetForm()">
             Cancel
@@ -44,18 +44,19 @@
 import axios from 'axios'
 import moment from 'moment'
 import makeNumberList from '../mixins/makeNumberList'
+import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
 import SubmitMessage from '../components/SubmitMessage'
 import TimePicker from '../components/TimePicker'
 
 export default {
   name: 'Reservations',
-  mixins: [makeNumberList],
+  mixins: [makeNumberList, today],
   components: { DatePicker, SubmitMessage, TimePicker },
   data() {
     return {
       componentKey: 0,
-      date: moment(),
+      date: this.today,
       email: null,
       name: null,
       quantity: 0,
@@ -101,12 +102,6 @@ export default {
       this.submitMessage = null
       this.quantity = 0
       this.componentKey += 1
-    },
-    updateDate(newVal) {
-      this.date = moment(newVal)
-    },
-    updateTime(newVal) {
-      this.startTime = newVal
     },
     validateEmail(email) {
       if (!email) return

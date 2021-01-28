@@ -5,17 +5,9 @@
     :key="componentKey"
   >
     <h2>Create a new inventory slot</h2>
-    <date-picker @change="updateDate" :withLabel="true" />
-    <time-picker
-      id="start-time"
-      label="Start Time"
-      @change="newVal => updateTime(newVal, 'start')"
-    />
-    <time-picker
-      id="end-time"
-      label="End Time"
-      @change="newVal => updateTime(newVal, 'end')"
-    />
+    <date-picker v-model="date" />
+    <time-picker id="start-time" label="Start Time" v-model="startTime" />
+    <time-picker id="end-time" label="End Time" v-model="endTime" />
     <label>
       Number of reservations for every 15 minute window:
       <select id="quantity" v-model="quantity">
@@ -38,18 +30,18 @@
 <script>
 import moment from 'moment'
 import makeNumberList from '../mixins/makeNumberList'
+import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
 import SubmitMessage from '../components/SubmitMessage'
 import TimePicker from '../components/TimePicker'
 
 export default {
   name: 'InventoryCreate',
-  mixins: [makeNumberList],
+  mixins: [makeNumberList, today],
   components: { DatePicker, SubmitMessage, TimePicker },
   data() {
     return {
       componentKey: 0,
-      date: moment(),
       endTime: '01:00',
       quantity: 0,
       submitMessage: null,
@@ -57,6 +49,9 @@ export default {
     }
   },
   computed: {
+    date() {
+      return this.today
+    },
     quantityOptions() {
       return this.makeNumberList(1, 20, 1, 1)
     }
@@ -83,16 +78,6 @@ export default {
       this.submitMessage = null
       this.quantity = 0
       this.componentKey += 1
-    },
-    updateDate(newVal) {
-      this.date = moment(newVal)
-    },
-    updateTime(newVal, type) {
-      if (type == 'start') {
-        this.startTime = newVal
-      } else if (type == 'end') {
-        this.endTime = newVal
-      }
     }
   }
 }

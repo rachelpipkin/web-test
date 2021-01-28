@@ -1,35 +1,34 @@
 <template>
   <div class="date-picker">
     <label v-if="withLabel">Date&nbsp;</label>
-    <input type="date" id="date" v-model="formattedDate" />
+    <input type="date" id="date" v-model="inputVal" />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 
+const todayString = moment().format('YYYY-MM-DD')
+
 export default {
   name: 'DatePicker',
   props: {
+    value: {
+      type: String,
+      default: todayString
+    },
     withLabel: {
       type: Boolean,
       default: false
     }
   },
-  data() {
-    return {
-      date: moment()
-    }
-  },
   computed: {
-    formattedDate: {
+    inputVal: {
       get() {
-        return this.date.format('YYYY-MM-DD')
+        return this.value
       },
-      set(newVal) {
-        this.$emit('change', newVal)
-
-        return newVal
+      set(val) {
+        this.$emit('input', val)
       }
     }
   }

@@ -18,7 +18,7 @@
     </div>
     <inventory-create v-if="isActive('create')" />
     <div v-else>
-      <date-picker @change="updateDate" />
+      <date-picker v-model="filterDate" />
       <div class="flex-column" id="inventory-table">
         <table>
           <tr>
@@ -41,16 +41,19 @@
 
 <script>
 import _filter from 'lodash/filter'
+import moment from 'moment'
+import today from '../mixins/today'
 import InventoryCreate from './InventoryCreate'
 import DatePicker from '../components/DatePicker'
 
 export default {
   name: 'Inventory',
+  mixins: [today],
   components: { DatePicker, InventoryCreate },
   data() {
     return {
       activeItem: 'view',
-      filterDate: '2021-01-29',
+      filterDate: this.today,
       inventoryList: [
         {
           id: 1,
@@ -78,9 +81,6 @@ export default {
     },
     setActive(menuItem) {
       this.activeItem = menuItem
-    },
-    updateDate(newVal) {
-      this.filterDate = newVal
     }
   }
 }
