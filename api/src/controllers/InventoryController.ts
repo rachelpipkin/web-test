@@ -1,9 +1,8 @@
-import { Controller, Get } from '@overnightjs/core'
+import { Controller, Get, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
 
 const inventory = [
   {
-    id: 1,
     date: '2021-01-28',
     startTime: '9:00am',
     endTime: '9:15am',
@@ -11,7 +10,6 @@ const inventory = [
     total: 5,
   },
   {
-    id: 2,
     date: '2021-01-28',
     startTime: '9:15am',
     endTime: '9:30am',
@@ -19,7 +17,6 @@ const inventory = [
     total: 5,
   },
   {
-    id: 3,
     date: '2021-01-29',
     startTime: '9:00am',
     endTime: '9:15am',
@@ -30,9 +27,16 @@ const inventory = [
 
 @Controller('inventory')
 export class InventoryController {
-  @Get('')
+  @Get()
   private async get(req: Request, res: Response) {
-    res.send(inventory)
-    return res.sendStatus(200)
+    return res.status(200).send(inventory)
+  }
+  @Post()
+  private add(req: Request, res: Response) {
+    const block = req.body
+
+    inventory.push(block)
+
+    return res.status(200).send(block)
   }
 }

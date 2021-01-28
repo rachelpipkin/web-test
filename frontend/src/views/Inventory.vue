@@ -27,7 +27,7 @@
             <th>Booked</th>
             <th>Total</th>
           </tr>
-          <tr v-for="inv in filtedInventoryList" :key="inv.id">
+          <tr v-for="(inv, index) in filtedInventoryList" :key="index">
             <td>{{ inv.startTime }}</td>
             <td>{{ inv.endTime }}</td>
             <td>{{ inv.booked }}</td>
@@ -71,9 +71,6 @@ export default {
     server.get('inventory').then(response => {
       this.inventoryList = response.data
     })
-    // .catch(e => {
-    //   this.errors.push(e)
-    // })
   },
   methods: {
     isActive(menuItem) {

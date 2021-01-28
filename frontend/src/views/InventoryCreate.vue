@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { server } from '../server'
 import makeNumberList from '../mixins/makeNumberList'
 import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
@@ -64,12 +64,29 @@ export default {
           type: 'error'
         }
       } else {
-        //   TODO format and submit to the server
-        this.resetForm()
-        this.submitMessage = {
-          text: 'Inventory block created.',
-          type: 'success'
+        const formattedReq = {
+          date: this.date,
+          startTime: this.startTime,
+          endTime: this.endTime,
+          booked: 0,
+          total: this.quantity
         }
+
+        server
+          .post('inventory', formattedReq)
+          .then(r => this.resetForm())
+          .then(r => {
+            this.submitMessage = {
+              text: 'Inventory block created.',
+              type: 'success'
+            }
+          })
+          .catch(e => {
+            this.submitMessage = {
+              text: 'Unable to create inventory.',
+              type: 'error'
+            }
+          })
       }
     },
     resetForm() {
