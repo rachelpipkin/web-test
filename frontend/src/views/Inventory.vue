@@ -19,7 +19,10 @@
     <inventory-create v-if="isActive('create')" />
     <div v-else>
       <date-picker v-model="filterDate" />
-      <div class="flex-column" id="inventory-table">
+      <div v-if="!filtedInventoryList.length">
+        <p>No available inventory for this date</p>
+      </div>
+      <div v-else class="flex-column" id="inventory-table">
         <table>
           <tr>
             <th>Start</th>
@@ -28,8 +31,8 @@
             <th>Total</th>
           </tr>
           <tr v-for="(inv, index) in filtedInventoryList" :key="index">
-            <td>{{ inv.startTime }}</td>
-            <td>{{ inv.endTime }}</td>
+            <td>{{ moment(inv.startTime, 'kk:mm').format('hh:mm a') }}</td>
+            <td>{{ moment(inv.endTime, 'kk:mm').format('hh:mm a') }}</td>
             <td>{{ inv.booked }}</td>
             <td>{{ inv.total }}</td>
           </tr>
@@ -58,6 +61,13 @@ export default {
       inventoryList: []
     }
   },
+  watch: {
+    activeItem(newVal, oldVal) {
+      if (oldVal != 'view' && newVal == 'view') {
+        this.getInventoryList()
+      }
+    }
+  },
   computed: {
     filtedInventoryList: {
       get() {
@@ -68,11 +78,15 @@ export default {
     }
   },
   async created() {
-    server.get('inventory').then(response => {
-      this.inventoryList = response.data
-    })
+    this.getInventoryList()
   },
   methods: {
+    moment,
+    getInventoryList() {
+      server.get('inventory').then(response => {
+        this.inventoryList = response.data
+      })
+    },
     isActive(menuItem) {
       return this.activeItem === menuItem
     },
@@ -85,7 +99,7 @@ export default {
 
 <style>
 #inventory-table {
-  margin: 0 auto;
+  margin: 5px auto;
   text-align: left;
   width: 50%;
 }

@@ -34,3 +34,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.date-picker {
+  margin-bottom: 7px;
+  padding: 1px;
+}
+</style>

@@ -5,7 +5,7 @@
     :key="componentKey"
   >
     <h2>Create a new inventory slot</h2>
-    <date-picker v-model="date" />
+    <date-picker v-model="date" :withLabel="true" />
     <time-picker id="start-time" label="Start Time" v-model="startTime" />
     <time-picker id="end-time" label="End Time" v-model="endTime" />
     <label>

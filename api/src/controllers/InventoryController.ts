@@ -1,41 +1,40 @@
 import { Controller, Get, Post } from '@overnightjs/core'
 import { Request, Response } from 'express'
+import moment from 'moment'
 
-const inventory = [
-  {
-    date: '2021-01-28',
-    startTime: '9:00am',
-    endTime: '9:15am',
-    booked: 2,
-    total: 5,
-  },
-  {
-    date: '2021-01-28',
-    startTime: '9:15am',
-    endTime: '9:30am',
-    booked: 5,
-    total: 5,
-  },
-  {
-    date: '2021-01-29',
-    startTime: '9:00am',
-    endTime: '9:15am',
-    booked: 0,
-    total: 5,
-  },
-]
+const inventoryList = []
+
+const buildInventory = block => {
+  const dateFormat = 'YYYY-MM-DD'
+  const timeFormat = 'kk:mm'
+  const dateTimeFormat = `${dateFormat} ${timeFormat}`
+  const momentStart = moment(`${block.date} ${block.startTime}`, dateTimeFormat)
+  const momentEnd = moment(`${block.date} ${block.endTime}`, dateTimeFormat)
+
+  for (let start = momentStart.clone(); start.isSameOrBefore(momentEnd); start.add(15, 'minutes')) {
+    const formattedInv = {
+      date: block.date,
+      startTime: moment(start).format(timeFormat),
+      endTime: momentStart.add(15, 'minutes').format(timeFormat),
+      booked: 0,
+      total: parseInt(block.total),
+    }
+
+    inventoryList.push(formattedInv)
+  }
+}
 
 @Controller('inventory')
 export class InventoryController {
   @Get()
   private async get(req: Request, res: Response) {
-    return res.status(200).send(inventory)
+    return res.status(200).send(inventoryList)
   }
   @Post()
   private add(req: Request, res: Response) {
     const block = req.body
 
-    inventory.push(block)
+    buildInventory(block)
 
     return res.status(200).send(block)
   }
