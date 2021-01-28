@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import axios from 'axios'
-import moment from 'moment'
 import makeNumberList from '../mixins/makeNumberList'
 import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
@@ -69,16 +67,9 @@ export default {
       return this.makeNumberList(1, 20, 1, 1)
     }
   },
-  // async mounted() {
-  //   try {
-  //     await axios.get('http://localhost:9090/test')
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // },
   methods: {
     createReservation() {
-      const { email, name, startTime, quantity } = this
+      const { email, name, quantity } = this
       const validEmail = this.validateEmail(email)
 
       if (!validEmail || !name || !quantity) {

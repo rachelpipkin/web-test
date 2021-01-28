@@ -2,9 +2,8 @@ require('source-map-support/register')
 import { Sequelize } from 'sequelize-typescript'
 import { RouterServer } from './RouterServer'
 import * as models from './models'
-
 ;(async () => {
-  new RouterServer().start(8080)
+  new RouterServer().start(8081)
 
   const sequelize = new Sequelize(process.env.DATABASE_CONNECTION_STRING, {
     dialect: 'postgres',
@@ -13,7 +12,6 @@ import * as models from './models'
   })
 
   await sequelize.sync({
-    alter: true
+    alter: true,
   })
-
 })()

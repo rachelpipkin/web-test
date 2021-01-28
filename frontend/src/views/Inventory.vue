@@ -42,28 +42,20 @@
 <script>
 import _filter from 'lodash/filter'
 import moment from 'moment'
-import today from '../mixins/today'
+import { server } from '../server'
 import InventoryCreate from './InventoryCreate'
 import DatePicker from '../components/DatePicker'
 
+const today = moment().format('YYYY-MM-DD')
+
 export default {
   name: 'Inventory',
-  mixins: [today],
   components: { DatePicker, InventoryCreate },
   data() {
     return {
       activeItem: 'view',
-      filterDate: this.today,
-      inventoryList: [
-        {
-          id: 1,
-          date: '2021-01-28',
-          startTime: '9:00am',
-          endTime: '9:15am',
-          booked: 2,
-          total: 5
-        }
-      ]
+      filterDate: today,
+      inventoryList: []
     }
   },
   computed: {
@@ -74,6 +66,14 @@ export default {
         })
       }
     }
+  },
+  async created() {
+    server.get('inventory').then(response => {
+      this.inventoryList = response.data
+    })
+    // .catch(e => {
+    //   this.errors.push(e)
+    // })
   },
   methods: {
     isActive(menuItem) {
