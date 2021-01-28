@@ -41,6 +41,12 @@
   }
 }
 
+.component-wrapper {
+  align-items: flex-start;
+  width: 75%;
+  margin: 0 auto;
+}
+
 .error {
   color: rgb(175, 0, 0);
 }

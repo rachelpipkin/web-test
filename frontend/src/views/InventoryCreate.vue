@@ -1,6 +1,10 @@
 <template>
-  <div id="inventory-create" class="flex-column" :key="componentKey">
-    <h1>Create a new inventory slot</h1>
+  <div
+    id="inventory-create"
+    class="flex-column component-wrapper"
+    :key="componentKey"
+  >
+    <h2>Create a new inventory slot</h2>
     <date-picker @change="updateDate" :withLabel="true" />
     <time-picker
       id="start-time"
@@ -22,7 +26,7 @@
     </label>
 
     <div id="action-items">
-      <button type="button" class="button">Cancel</button>
+      <button type="button" class="button" @click="resetForm()">Cancel</button>
       <button type="button" class="button primary" @click="createInventory">
         Create
       </button>
@@ -59,7 +63,7 @@ export default {
   },
   methods: {
     createInventory() {
-      if (this.startTime == this.endTime || this.quantity == 0) {
+      if (this.startTime == this.endTime || !this.quantity) {
         this.submitMessage = {
           text: 'One or more fields is invalid, please try again.',
           type: 'error'
@@ -74,8 +78,9 @@ export default {
       }
     },
     resetForm() {
-      this.startTime = '01:00'
       this.endTime = '01:00'
+      this.startTime = '01:00'
+      this.submitMessage = null
       this.quantity = 0
       this.componentKey += 1
     },
@@ -94,11 +99,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-#inventory-create {
-  align-items: flex-start;
-  width: 75%;
-  margin: 0 auto;
-}
 #inventory-create input {
   padding: 5px 0;
   margin: 10px 0;
