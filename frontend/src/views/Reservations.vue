@@ -41,20 +41,23 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { server } from '../server'
 import makeNumberList from '../mixins/makeNumberList'
-import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
 import SubmitMessage from '../components/SubmitMessage'
 import TimePicker from '../components/TimePicker'
 
+const today = moment().format('YYYY-MM-DD')
+
 export default {
   name: 'Reservations',
-  mixins: [makeNumberList, today],
+  mixins: [makeNumberList],
   components: { DatePicker, SubmitMessage, TimePicker },
   data() {
     return {
       componentKey: 0,
-      date: this.today,
+      date: today,
       email: null,
       name: null,
       quantity: 0,
@@ -69,7 +72,7 @@ export default {
   },
   methods: {
     createReservation() {
-      const { email, name, quantity } = this
+      const { email, date, name, startTime, quantity } = this
       const validEmail = this.validateEmail(email)
 
       if (!validEmail || !name || !quantity) {
@@ -78,12 +81,29 @@ export default {
           type: 'error'
         }
       } else {
-        //   TODO format and submit to the server
-        this.resetForm()
-        this.submitMessage = {
-          text: 'Reservation booked.',
-          type: 'success'
+        const formattedReq = {
+          date,
+          email,
+          name,
+          quantity,
+          startTime
         }
+
+        server
+          .patch('inventory', formattedReq)
+          .then(r => this.resetForm())
+          .then(r => {
+            this.submitMessage = {
+              text: 'Reservation Booked.',
+              type: 'success'
+            }
+          })
+          .catch(e => {
+            this.submitMessage = {
+              text: 'Inventory full. Please reserve another time.',
+              type: 'error'
+            }
+          })
       }
     },
     resetForm() {
