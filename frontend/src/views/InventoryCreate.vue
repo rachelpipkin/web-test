@@ -28,20 +28,24 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { server } from '../server'
 import makeNumberList from '../mixins/makeNumberList'
-import today from '../mixins/today'
 import DatePicker from '../components/DatePicker'
 import SubmitMessage from '../components/SubmitMessage'
 import TimePicker from '../components/TimePicker'
 
+const now = moment()
+const today = moment().format('YYYY-MM-DD')
+
 export default {
   name: 'InventoryCreate',
-  mixins: [makeNumberList, today],
+  mixins: [makeNumberList],
   components: { DatePicker, SubmitMessage, TimePicker },
   data() {
     return {
       componentKey: 0,
+      date: today,
       endTime: '01:00',
       quantity: 0,
       submitMessage: null,
@@ -49,39 +53,39 @@ export default {
     }
   },
   computed: {
-    date() {
-      return this.today
-    },
     quantityOptions() {
       return this.makeNumberList(1, 20, 1, 1)
     }
   },
   methods: {
     createInventory() {
-      if (this.startTime == this.endTime || !this.quantity) {
+      const { date, startTime, endTime } = this
+      const validDate = this.validateDateTime(date, startTime, endTime)
+
+      if (startTime == endTime || !this.quantity || !validDate) {
         this.submitMessage = {
           text: 'One or more fields is invalid, please try again.',
           type: 'error'
         }
       } else {
         const formattedReq = {
-          date: this.date,
-          startTime: this.startTime,
-          endTime: this.endTime,
+          date,
+          startTime,
+          endTime,
           booked: 0,
           total: this.quantity
         }
 
         server
           .post('inventory', formattedReq)
-          .then(r => this.resetForm())
-          .then(r => {
+          .then(() => this.resetForm())
+          .then(() => {
             this.submitMessage = {
               text: 'Inventory block created.',
               type: 'success'
             }
           })
-          .catch(e => {
+          .catch(() => {
             this.submitMessage = {
               text: 'Unable to create inventory.',
               type: 'error'
@@ -95,6 +99,12 @@ export default {
       this.submitMessage = null
       this.quantity = 0
       this.componentKey += 1
+    },
+    validateDateTime(date, start, end) {
+      const momentStart = moment(`${date} ${start}`, 'YYYY-MM-DD kk:mm')
+      const momentEnd = moment(`${date} ${end}`, 'YYYY-MM-DD kk:mm')
+
+      return momentStart.isAfter(now) && momentStart.isBefore(momentEnd)
     }
   }
 }

@@ -11,6 +11,8 @@ const _buildInventory = block => {
   const momentStart = moment(`${block.date} ${block.startTime}`, dateTimeFormat)
   const momentEnd = moment(`${block.date} ${block.endTime}`, dateTimeFormat)
 
+  console.log(dateTimeFormat, momentStart, momentEnd)
+
   for (let start = momentStart.clone(); start.isBefore(momentEnd); start.add(15, 'minutes')) {
     const formattedInv = {
       date: block.date,

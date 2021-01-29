@@ -48,6 +48,7 @@ import DatePicker from '../components/DatePicker'
 import SubmitMessage from '../components/SubmitMessage'
 import TimePicker from '../components/TimePicker'
 
+const now = moment()
 const today = moment().format('YYYY-MM-DD')
 
 export default {
@@ -74,8 +75,12 @@ export default {
     createReservation() {
       const { email, date, name, startTime, quantity } = this
       const validEmail = this.validateEmail(email)
+      const validDate = moment(
+        `${date} ${startTime}`,
+        'YYYY-MM-DD kk:mm'
+      ).isAfter(now)
 
-      if (!validEmail || !name || !quantity) {
+      if (!validEmail || !validDate || !name || !quantity) {
         this.submitMessage = {
           text: 'One or more fields is invalid, please try again.',
           type: 'error'
@@ -91,16 +96,16 @@ export default {
 
         server
           .patch('inventory', formattedReq)
-          .then(r => this.resetForm())
-          .then(r => {
+          .then(() => this.resetForm())
+          .then(() => {
             this.submitMessage = {
               text: 'Reservation Booked.',
               type: 'success'
             }
           })
-          .catch(e => {
+          .catch(() => {
             this.submitMessage = {
-              text: 'Inventory full. Please reserve another time.',
+              text: 'Inventory full at selected time.',
               type: 'error'
             }
           })
